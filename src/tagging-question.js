@@ -134,9 +134,10 @@ export class TaggingQuestion extends LitElement {
 
   drop(e) {
     e.preventDefault();
-    const draggedTag = e.dataTransfer.getData('text/plain');
-    // Push the dragged tag to the droppedTags array
-    this.droppedTags = [...this.droppedTags, draggedTag];
+    // Get the data transferred in the event
+    const draggedTags = e.dataTransfer.getData('text/plain').split(',');
+    // Set the dropped tags
+    this.droppedTags = [...this.droppedTags, ...draggedTags];
     this.isAnswered = true;
   }
 
