@@ -47,7 +47,7 @@ export class TaggingQuestion extends LitElement {
     }
 
     .dropped-tag {
-      background-color: #6bd425;
+      background-color: #007bff;
       color: #fff;
       padding: 8px 12px;
       border-radius: 20px;
@@ -102,6 +102,8 @@ export class TaggingQuestion extends LitElement {
     this.droppedTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
+    this.imageData = ''; 
+    this.question = '';
   }
 
   render() {
