@@ -70,8 +70,13 @@ export class TaggingQuestion extends LitElement {
     this.imageData = ''; // Initialize to empty string
     this.question = ''; // Initialize to empty string
     this.tagData = [
-      { value: 'good form', correct: true, feedback: 'The shape of the vase clearly demonstrates craftsmanship' },
-      { value: 'poor taste', correct: false, feedback: 'Taste is in the eye of the designer as well as the viewer.' }
+      { value: 'Relaxed', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.' },
+      { value: 'Excited', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.' },
+      { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.' },
+      { value: 'Refreshing', correct: true, feedback: 'Feeling refreshed by the cool breeze and ocean waves.' },
+      { value: 'Crowded', correct: false, feedback: 'Feeling overwhelmed by the large number of people at the beach.' },
+      { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.' },
+      { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.' }
     ];
     this.droppedTag = '';
     this.isAnswered = false;
@@ -90,7 +95,7 @@ export class TaggingQuestion extends LitElement {
           ${this.tagData.map(
             (tag) => html`
               <div 
-                class="tag ${tag.correct ? 'correct' : 'incorrect'}" 
+                class="tag" 
                 draggable="true" 
                 @dragstart="${(e) => this.dragStart(e, tag)}"
               >
@@ -105,7 +110,8 @@ export class TaggingQuestion extends LitElement {
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
         >
-          ${this.droppedTag ? html`${this.droppedTag}` : ''}
+          <!-- Display dropped tags -->
+          ${this.droppedTags ? this.droppedTags.map(tag => html`<div class="dropped-tag">${tag}</div>`) : ''}
         </div>
         <!-- Feedback area -->
         <div class="feedback">${this.feedbackMessage}</div>
@@ -114,6 +120,7 @@ export class TaggingQuestion extends LitElement {
       </div>
     `;
   }
+  
 
   dragStart(e, tag) {
     e.dataTransfer.setData('text/plain', tag.value);
@@ -125,7 +132,7 @@ export class TaggingQuestion extends LitElement {
 
   drop(e) {
     e.preventDefault();
-    const tagValue = e.dataTransfer.getData('text/plain');
+    const tagValues = e.dataTransfer.getData('text/plain').split(',');
     console.log('Dropped tag:', tagValue);
     this.droppedTag = tagValue;
     this.isAnswered = true;
