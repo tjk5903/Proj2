@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="Description" content="Boilerplate for polaris chip">
   <base href="/">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 
   <style>
     :root,
@@ -13,30 +14,29 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
-      background-color: #ededed;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #92967c;
     }
+
     polaris-chip {
-      margin: 16px;
+      margin: 10px;
+      display: inline;
+      padding: 5;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     }
   </style>
-  <title>polaris-chip / my-card</title>
 </head>
 
 <body>
-  <h1>polaris-chip</h1>
-  <!-- this is going to do whatever the tag's defaults are -->
-  <polaris-chip title="News of Record" link="https://psu.edu/"></polaris-chip>
-  <polaris-chip title="Faculty and Staff"></polaris-chip>
-  <polaris-chip title="Sports are the only thing that matter"></polaris-chip>
-  <polaris-chip title="Grants and donations"></polaris-chip>
+  <tagging-question> .tagData=${[
+    { value: 'good form', correct: true, feedback: 'The shape of the vase clearly demonstrates craftsmanship' },
+    { value: 'poor taste', correct: false, feedback: 'Taste is in the eye of the designer as well as the viewer.' },
+    // Add more tag data as needed
+  ]}</tagging-question>
 
-  <h1>my-card</h1>
-  <my-card></my-card>
-
-  <!-- this is what is bringing in the definition for this tag -->
   <script type="module" src="./src/polaris-chip.js"></script>
   <script type="module" src="./src/my-card.js"></script>
+  <script type="module" src="./src/tagging-question.js"></script>
 </body>
 
 </html>
