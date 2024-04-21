@@ -78,7 +78,7 @@ export class TaggingQuestion extends LitElement {
       { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.' },
       { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.' }
     ];
-    this.droppedTag = '';
+    this.droppedTag = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
   }
@@ -124,12 +124,9 @@ export class TaggingQuestion extends LitElement {
 
   
 
-dragStart(e, tag) {
-  // Get the data transferred in the event
-  const draggedTag = tag.value;
-  // Set the data to be transferred
-  e.dataTransfer.setData('text/plain', draggedTag);
-}
+  dragStart(e, tag) {
+    e.dataTransfer.setData('text/plain', tag.value);
+  }
 
   allowDrop(e) {
     e.preventDefault();
@@ -137,10 +134,9 @@ dragStart(e, tag) {
 
   drop(e) {
     e.preventDefault();
-    // Get the data transferred in the event
-    const draggedTags = e.dataTransfer.getData('text/plain').split(',');
-    // Set the dropped tags
-    this.droppedTags = [...this.droppedTags, ...draggedTags];
+    const draggedTag = e.dataTransfer.getData('text/plain');
+    // Push the dragged tag to the droppedTags array
+    this.droppedTags = [...this.droppedTags, draggedTag];
     this.isAnswered = true;
   }
 
@@ -154,9 +150,9 @@ dragStart(e, tag) {
   }
 
   reset() {
-    this.droppedTag = '';
+    this.droppedTags = []; // Reset droppedTags array
     this.isAnswered = false;
-    this.feedbackMessage = '';
+    this.feedbackMessage = ''; // Reset feedback message
   }
 }
 
