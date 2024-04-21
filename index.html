@@ -28,11 +28,16 @@
 </head>
 
 <body>
-  <tagging-question> .tagData=${[
+  <tagging-question 
+  question="What do you see in the image?" 
+  image-data="path_to_your_image.jpg" 
+  .tagData=${[
     { value: 'good form', correct: true, feedback: 'The shape of the vase clearly demonstrates craftsmanship' },
     { value: 'poor taste', correct: false, feedback: 'Taste is in the eye of the designer as well as the viewer.' },
     // Add more tag data as needed
-  ]}</tagging-question>
+  ]}
+>
+</tagging-question>
 
   <script type="module" src="./src/polaris-chip.js"></script>
   <script type="module" src="./src/my-card.js"></script>

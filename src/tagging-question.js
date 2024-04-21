@@ -60,21 +60,31 @@ export class TaggingQuestion extends LitElement {
     tagData: { type: Array }, 
     droppedTag: { type: String }, // Currently dropped tag value
     isAnswered: { type: Boolean }, // Flag to indicate if answer has been dropped
+    imageData: { type: String }, // URL of the image
+    question: { type: String },
+    feedbackMessage: { type: String }
   };
 
   constructor() {
     super();
+    this.imageData = ''; // Initialize to empty string
+    this.question = ''; // Initialize to empty string
     this.tagData = [
       { value: 'good form', correct: true, feedback: 'The shape of the vase clearly demonstrates craftsmanship' },
       { value: 'poor taste', correct: false, feedback: 'Taste is in the eye of the designer as well as the viewer.' }
     ];
     this.droppedTag = '';
     this.isAnswered = false;
+    this.feedbackMessage = '';
   }
 
   render() {
     return html`
       <div class="tagging-question-container">
+        <!-- Image -->
+        ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
+        <!-- Question -->
+        ${this.question ? html`<div class="question">${this.question}</div>` : ''}
         <div class="tags-container">
           <!-- Draggable tags -->
           ${this.tagData.map(
@@ -89,14 +99,16 @@ export class TaggingQuestion extends LitElement {
             `
           )}
         </div>
+        <!-- Answer area -->
         <div 
           class="answer-area" 
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
         >
-          <!-- Answer area where tags will be dropped -->
           ${this.droppedTag ? html`${this.droppedTag}` : ''}
         </div>
+        <!-- Feedback area -->
+        <div class="feedback">${this.feedbackMessage}</div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
       </div>
@@ -120,12 +132,22 @@ export class TaggingQuestion extends LitElement {
   }
 
   checkAnswer() {
-    console.log('Checking answer...');
+    const selectedTag = this.tagData.find(tag => tag.value === this.droppedTag);
+    if (selectedTag) {
+      if (selectedTag.correct) {
+        this.feedbackMessage = 'Correct!';
+      } else {
+        this.feedbackMessage = 'Incorrect!';
+      }
+    } else {
+      this.feedbackMessage = 'Please drop a tag to check the answer.';
+    }
   }
 
   reset() {
     this.droppedTag = '';
     this.isAnswered = false;
+    this.feedbackMessage = '';
   }
 }
 
