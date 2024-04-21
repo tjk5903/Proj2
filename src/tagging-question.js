@@ -32,6 +32,10 @@ export class TaggingQuestion extends LitElement {
     .tag.incorrect {
       background-color: #ff6961;
     }
+    .tag.disabled {
+      opacity: 0.5; 
+      pointer-events: none; 
+    }
 
     .answer-area {
       min-height: 100px;
@@ -106,18 +110,18 @@ export class TaggingQuestion extends LitElement {
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
         <div class="tags-container">
-          ${this.tagData.map(
-            (tag) => html`
-              <div 
-                class="tag" 
-                draggable="${tag.draggable}" 
-                @dragstart="${(e) => this.dragStart(e, tag)}"
-              >
-                ${tag.value}
-              </div>
-            `
-          )}
-        </div>
+        ${this.tagData.map(
+          (tag) => html`
+            <div 
+              class="tag ${tag.draggable ? '' : 'disabled'}" 
+              draggable="${tag.draggable}" 
+              @dragstart="${(e) => this.dragStart(e, tag)}"
+            >
+              ${tag.value}
+            </div>
+          `
+        )}
+      </div>
         <div 
           class="answer-area" 
           @dragover="${this.allowDrop}" 
