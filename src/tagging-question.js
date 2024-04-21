@@ -83,6 +83,7 @@ export class TaggingQuestion extends LitElement {
     this.feedbackMessage = '';
   }
 
+  // Modify the render function to display multiple dropped tags
   render() {
     return html`
       <div class="tagging-question-container">
@@ -120,11 +121,15 @@ export class TaggingQuestion extends LitElement {
       </div>
     `;
   }
+
   
 
-  dragStart(e, tag) {
-    e.dataTransfer.setData('text/plain', tag.value);
-  }
+dragStart(e, tag) {
+  // Get the data transferred in the event
+  const draggedTag = tag.value;
+  // Set the data to be transferred
+  e.dataTransfer.setData('text/plain', draggedTag);
+}
 
   allowDrop(e) {
     e.preventDefault();
@@ -132,22 +137,19 @@ export class TaggingQuestion extends LitElement {
 
   drop(e) {
     e.preventDefault();
-    const tagValues = e.dataTransfer.getData('text/plain').split(',');
-    console.log('Dropped tag:', tagValue);
-    this.droppedTag = tagValue;
+    // Get the data transferred in the event
+    const draggedTags = e.dataTransfer.getData('text/plain').split(',');
+    // Set the dropped tags
+    this.droppedTags = [...this.droppedTags, ...draggedTags];
     this.isAnswered = true;
   }
 
   checkAnswer() {
-    const selectedTag = this.tagData.find(tag => tag.value === this.droppedTag);
-    if (selectedTag) {
-      if (selectedTag.correct) {
-        this.feedbackMessage = 'Correct!';
-      } else {
-        this.feedbackMessage = 'Incorrect!';
-      }
+    const incorrectTags = this.droppedTags.filter(tag => !this.tagData.find(item => item.value === tag)?.correct);
+    if (incorrectTags.length > 0) {
+      this.feedbackMessage = 'Incorrect!';
     } else {
-      this.feedbackMessage = 'Please drop a tag to check the answer.';
+      this.feedbackMessage = 'Correct!';
     }
   }
 
