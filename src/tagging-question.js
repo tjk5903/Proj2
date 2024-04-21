@@ -75,27 +75,27 @@ export class TaggingQuestion extends LitElement {
 
   static properties = {
     tagData: { type: Array },
-    droppedTags: { type: Array }, // Array to store dropped tags
-    isAnswered: { type: Boolean }, // Flag to indicate if answer has been dropped
-    imageData: { type: String }, // URL of the image
+    droppedTags: { type: Array },
+    isAnswered: { type: Boolean },
+    imageData: { type: String },
     question: { type: String },
     feedbackMessage: { type: String }
   };
 
   constructor() {
     super();
-    this.imageData = ''; // Initialize to empty string
-    this.question = ''; // Initialize to empty string
+    this.imageData = '';
+    this.question = '';
     this.tagData = [
-      { value: 'Relaxed', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.' },
-      { value: 'Excited', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.' },
-      { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.' },
-      { value: 'Refreshing', correct: true, feedback: 'Feeling refreshed by the cool breeze and ocean waves.' },
-      { value: 'Crowded', correct: false, feedback: 'Feeling overwhelmed by the large number of people at the beach.' },
-      { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.' },
-      { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.' }
+      { value: 'Relaxed', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
+      { value: 'Excited', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.', draggable: true },
+      { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.', draggable: true },
+      { value: 'Refreshing', correct: true, feedback: 'Feeling refreshed by the cool breeze and ocean waves.', draggable: true },
+      { value: 'Crowded', correct: false, feedback: 'Feeling overwhelmed by the large number of people at the beach.', draggable: true },
+      { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.', draggable: true },
+      { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.', draggable: true }
     ];
-    this.droppedTags = []; // Initialize droppedTags array
+    this.droppedTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
   }
@@ -103,17 +103,14 @@ export class TaggingQuestion extends LitElement {
   render() {
     return html`
       <div class="tagging-question-container">
-        <!-- Image -->
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
-        <!-- Question -->
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
         <div class="tags-container">
-          <!-- Draggable tags -->
           ${this.tagData.map(
             (tag) => html`
               <div 
                 class="tag" 
-                draggable="true" 
+                draggable="${tag.draggable}" 
                 @dragstart="${(e) => this.dragStart(e, tag)}"
               >
                 ${tag.value}
@@ -121,16 +118,13 @@ export class TaggingQuestion extends LitElement {
             `
           )}
         </div>
-        <!-- Answer area -->
         <div 
           class="answer-area" 
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
         >
-          <!-- Display dropped tags -->
           ${this.droppedTags ? this.droppedTags.map(tag => html`<div class="dropped-tag">${tag}</div>`) : ''}
         </div>
-        <!-- Feedback area -->
         <div class="feedback">${this.feedbackMessage}</div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
@@ -148,15 +142,18 @@ export class TaggingQuestion extends LitElement {
 
   drop(e) {
     e.preventDefault();
-    const draggedTags = e.dataTransfer.getData('text/plain').split(',');
-    this.droppedTags = [...this.droppedTags, ...draggedTags];
-    this.isAnswered = true;
-    // Disable draggable attribute for dropped tags
-    this.tagData.forEach(tag => {
-      if (this.droppedTags.includes(tag.value)) {
-        tag.draggable = false;
-      }
-    });
+    const draggedTag = e.dataTransfer.getData('text/plain');
+    const existingTag = this.droppedTags.find(tag => tag === draggedTag);
+    if (!existingTag) {
+      this.droppedTags = [...this.droppedTags, draggedTag];
+      this.isAnswered = true;
+      // Disable draggable attribute for the dropped tag
+      this.tagData.forEach(tag => {
+        if (tag.value === draggedTag) {
+          tag.draggable = false;
+        }
+      });
+    }
   }
 
   checkAnswer() {
@@ -169,9 +166,13 @@ export class TaggingQuestion extends LitElement {
   }
 
   reset() {
-    this.droppedTags = []; // Reset droppedTags array
+    this.droppedTags = [];
     this.isAnswered = false;
-    this.feedbackMessage = ''; // Reset feedback message
+    this.feedbackMessage = '';
+    // Reset draggable attribute for all tags
+    this.tagData.forEach(tag => {
+      tag.draggable = true;
+    });
   }
 }
 
