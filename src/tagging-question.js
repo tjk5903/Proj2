@@ -47,7 +47,7 @@ export class TaggingQuestion extends LitElement {
     }
 
     .dropped-tag {
-      background-color: #007bff;
+      background-color: #92967c;
       color: #fff;
       padding: 8px 12px;
       border-radius: 20px;
@@ -74,6 +74,11 @@ export class TaggingQuestion extends LitElement {
     .check-answer-btn:disabled {
       background-color: #ccc;
       cursor: not-allowed;
+    }
+    .question {
+      text-align: center; 
+      font-weight: bold; 
+      margin-top: 10px; 
     }
     .question-image {
       display: block;
