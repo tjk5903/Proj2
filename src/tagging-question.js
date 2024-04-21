@@ -3,7 +3,7 @@ import { LitElement, html, css } from 'lit';
 export class TaggingQuestion extends LitElement {
   static styles = css`
     .tagging-question-container {
-      background-color: #f3e9e0; 
+      background-color: #f3e9e0;
       padding: 20px;
       border-radius: 15px;
       width: 80%;
@@ -17,7 +17,7 @@ export class TaggingQuestion extends LitElement {
     }
 
     .tag {
-      background-color: #d4d4d4; 
+      background-color: #d4d4d4;
       padding: 8px 12px;
       border-radius: 20px;
       margin-right: 10px;
@@ -26,24 +26,41 @@ export class TaggingQuestion extends LitElement {
     }
 
     .tag.correct {
-      background-color: #6bd425; 
+      background-color: #6bd425;
     }
 
     .tag.incorrect {
-      background-color: #ff6961; 
+      background-color: #ff6961;
     }
 
     .answer-area {
       min-height: 100px;
       border: 2px dashed #ccc;
       margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .dropped-tag {
+      background-color: #6bd425;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 20px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      cursor: default;
+    }
+
+    .feedback {
+      margin-top: 10px;
     }
 
     .check-answer-btn,
     .reset-btn {
       margin-top: 20px;
       padding: 10px 20px;
-      background-color: #007bff; 
+      background-color: #007bff;
       color: #fff;
       border: none;
       border-radius: 5px;
@@ -51,14 +68,14 @@ export class TaggingQuestion extends LitElement {
     }
 
     .check-answer-btn:disabled {
-      background-color: #ccc; 
+      background-color: #ccc;
       cursor: not-allowed;
     }
   `;
 
   static properties = {
-    tagData: { type: Array }, 
-    droppedTag: { type: String }, // Currently dropped tag value
+    tagData: { type: Array },
+    droppedTags: { type: Array }, // Array to store dropped tags
     isAnswered: { type: Boolean }, // Flag to indicate if answer has been dropped
     imageData: { type: String }, // URL of the image
     question: { type: String },
@@ -78,12 +95,11 @@ export class TaggingQuestion extends LitElement {
       { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.' },
       { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.' }
     ];
-    this.droppedTag = [];
+    this.droppedTags = []; // Initialize droppedTags array
     this.isAnswered = false;
     this.feedbackMessage = '';
   }
 
-  // Modify the render function to display multiple dropped tags
   render() {
     return html`
       <div class="tagging-question-container">
@@ -122,8 +138,6 @@ export class TaggingQuestion extends LitElement {
     `;
   }
 
-  
-
   dragStart(e, tag) {
     e.dataTransfer.setData('text/plain', tag.value);
   }
@@ -134,11 +148,15 @@ export class TaggingQuestion extends LitElement {
 
   drop(e) {
     e.preventDefault();
-    // Get the data transferred in the event
     const draggedTags = e.dataTransfer.getData('text/plain').split(',');
-    // Set the dropped tags
     this.droppedTags = [...this.droppedTags, ...draggedTags];
     this.isAnswered = true;
+    // Disable draggable attribute for dropped tags
+    this.tagData.forEach(tag => {
+      if (this.droppedTags.includes(tag.value)) {
+        tag.draggable = false;
+      }
+    });
   }
 
   checkAnswer() {
