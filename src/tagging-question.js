@@ -25,12 +25,12 @@ export class TaggingQuestion extends LitElement {
       cursor: pointer;
     }
 
-    .tag.correct {
-      background-color: #6bd425;
+    .correct-tag {
+      border: 2px solid #6bd425; 
     }
 
-    .tag.incorrect {
-      background-color: #ff6961;
+    .incorrect-tag {
+      border: 2px solid #ff6961; 
     }
     .tag.disabled {
       opacity: 0.5; 
@@ -47,7 +47,7 @@ export class TaggingQuestion extends LitElement {
     }
 
     .dropped-tag {
-      background-color: #92967c;
+      background-color: #999999;
       color: #fff;
       padding: 8px 12px;
       border-radius: 20px;
@@ -124,30 +124,37 @@ export class TaggingQuestion extends LitElement {
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
         <div class="tags-container">
-        ${this.tagData.map(
-          (tag) => html`
-            <div 
-              class="tag ${tag.draggable ? '' : 'disabled'}" 
-              draggable="${tag.draggable}" 
-              @dragstart="${(e) => this.dragStart(e, tag)}"
-            >
-              ${tag.value}
-            </div>
-          `
-        )}
-      </div>
+          ${this.tagData.map(
+            (tag) => html`
+              <div 
+                class="tag ${tag.draggable ? '' : 'disabled'}" 
+                draggable="${tag.draggable}" 
+                @dragstart="${(e) => this.dragStart(e, tag)}"
+              >
+                ${tag.value}
+              </div>
+            `
+          )}
+        </div>
         <div 
           class="answer-area" 
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
         >
-          ${this.droppedTags ? this.droppedTags.map(tag => html`<div class="dropped-tag">${tag}</div>`) : ''}
+          ${this.droppedTags ? this.droppedTags.map(tag => 
+            html`<div class="dropped-tag ${this.getTagClass(tag)}">${tag}</div>`
+          ) : ''}
         </div>
         <div class="feedback">${this.feedbackMessage}</div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
       </div>
     `;
+  }
+  
+  getTagClass(tag) {
+    const correct = this.tagData.find(item => item.value === tag)?.correct;
+    return correct ? 'correct-tag' : 'incorrect-tag';
   }
 
   dragStart(e, tag) {
