@@ -165,24 +165,26 @@ export class TaggingQuestion extends LitElement {
   }
   
   toggleTag(e, tag) {
-    const clickedTagIndex = this.droppedTags.indexOf(tag.value);
-    if (clickedTagIndex !== -1) {
-      // Remove the tag if already present
-      this.droppedTags.splice(clickedTagIndex, 1);
+    const isInAnswerBox = this.droppedTags.includes(tag.value);
+    if (isInAnswerBox) {
+      // Remove the tag from the answer box
+      const droppedTagIndex = this.droppedTags.indexOf(tag.value);
+      this.droppedTags.splice(droppedTagIndex, 1);
       // Enable draggable attribute for the removed tag
       const originalTag = this.tagData.find(item => item.value === tag.value);
       if (originalTag) {
         originalTag.draggable = true;
       }
     } else {
-      // Add the tag if not present
+      // Add the tag to the answer box
       this.droppedTags.push(tag.value);
       // Disable draggable attribute for the added tag
       tag.draggable = false;
     }
+    // Check if there are any tags in the answer box
+    this.isAnswered = this.droppedTags.length > 0;
     this.requestUpdate();
   }
-  
   
   
   getTagClass(tag) {
