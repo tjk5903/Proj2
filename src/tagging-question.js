@@ -46,10 +46,14 @@ export class TaggingQuestion extends LitElement {
       align-items: center;
       justify-content: center;
     }
+
     .faded-text {
       color: #999999;
       font-style: italic;
       text-align: center;
+    }
+    .tag.faded {
+      opacity: 0.5;
     }
 
     .dropped-tag {
@@ -133,7 +137,7 @@ export class TaggingQuestion extends LitElement {
           ${this.tagData.map(
             (tag) => html`
               <div 
-                class="tag ${tag.draggable ? '' : 'disabled'}" 
+                class="tag ${this.droppedTags.includes(tag.value) ? 'faded' : ''} ${tag.draggable ? '' : 'disabled'}" 
                 draggable="${tag.draggable}" 
                 @dragstart="${(e) => this.dragStart(e, tag)}"
                 @click="${(e) => this.toggleTag(e, tag)}"
@@ -165,12 +169,20 @@ export class TaggingQuestion extends LitElement {
     if (clickedTagIndex !== -1) {
       // Remove the tag if already present
       this.droppedTags.splice(clickedTagIndex, 1);
+      // Enable draggable attribute for the removed tag
+      const originalTag = this.tagData.find(item => item.value === tag.value);
+      if (originalTag) {
+        originalTag.draggable = true;
+      }
     } else {
       // Add the tag if not present
       this.droppedTags.push(tag.value);
+      // Disable draggable attribute for the added tag
+      tag.draggable = false;
     }
     this.requestUpdate();
   }
+  
   
   
   getTagClass(tag) {
