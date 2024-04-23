@@ -136,6 +136,7 @@ export class TaggingQuestion extends LitElement {
                 class="tag ${tag.draggable ? '' : 'disabled'}" 
                 draggable="${tag.draggable}" 
                 @dragstart="${(e) => this.dragStart(e, tag)}"
+                @click="${(e) => this.toggleTag(e, tag)}"
               >
                 ${tag.value}
               </div>
@@ -149,7 +150,7 @@ export class TaggingQuestion extends LitElement {
         >
           ${this.droppedTags.length === 0 ? html`<div class="faded-text">Drag answers here</div>` : ''}
           ${this.droppedTags.map(tag => 
-            html`<div class="dropped-tag ${this.getTagClass(tag)}">${tag}</div>`
+            html`<div class="dropped-tag ${this.getTagClass(tag)}" @click="${(e) => this.toggleTag(e, tag)}">${tag}</div>`
           )}
         </div>
         <div class="feedback">${this.feedbackMessage}</div>
@@ -158,6 +159,19 @@ export class TaggingQuestion extends LitElement {
       </div>
     `;
   }
+  
+  toggleTag(e, tag) {
+    const clickedTagIndex = this.droppedTags.indexOf(tag.value);
+    if (clickedTagIndex !== -1) {
+      // Remove the tag if already present
+      this.droppedTags.splice(clickedTagIndex, 1);
+    } else {
+      // Add the tag if not present
+      this.droppedTags.push(tag.value);
+    }
+    this.requestUpdate();
+  }
+  
   
   getTagClass(tag) {
     const correct = this.tagData.find(item => item.value === tag)?.correct;
