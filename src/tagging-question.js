@@ -168,25 +168,16 @@ export class TaggingQuestion extends LitElement {
   toggleTag(e, tag) {
     const isInAnswerBox = this.droppedTags.includes(tag.value);
     if (isInAnswerBox) {
-      // Remove the tag from the answer box
       const droppedTagIndex = this.droppedTags.indexOf(tag.value);
       this.droppedTags.splice(droppedTagIndex, 1);
-      // Enable draggable attribute for the removed tag
       const originalTag = this.tagData.find(item => item.value === tag.value);
       if (originalTag) {
         originalTag.draggable = true;
       }
     } else {
-      // Check if the clicked tag is in the queue
-      const isFadedTag = this.tagData.find(item => item.value === tag.value && !item.draggable);
-      if (isFadedTag) {
-        // Move the tag back to the queue
-        this.droppedTags.push(tag.value);
-        // Disable draggable attribute for the added tag
-        tag.draggable = false;
-      }
+      this.droppedTags.push(tag.value);
+      tag.draggable = false;
     }
-    // Check if there are any tags in the answer box
     this.isAnswered = this.droppedTags.length > 0;
     this.requestUpdate();
   }
