@@ -154,7 +154,7 @@ export class TaggingQuestion extends LitElement {
         >
           ${this.droppedTags.length === 0 ? html`<div class="faded-text">Drag answers here</div>` : ''}
           ${this.droppedTags.map(tag => 
-            html`<div class="dropped-tag ${this.getTagClass(tag)}" @click="${(e) => this.toggleTag(e, tag)}">${tag}</div>`
+            html`<div class="dropped-tag ${this.getTagClass(tag)}" @click="${(e) => this.toggleTag(e, tag)}" draggable="true" @dragstart="${(e) => this.dragStart(e, tag)}">${tag}</div>`
           )}
         </div>
         <div class="feedback">${this.feedbackMessage}</div>
@@ -167,21 +167,16 @@ export class TaggingQuestion extends LitElement {
   toggleTag(e, tag) {
     const isInAnswerBox = this.droppedTags.includes(tag.value);
     if (isInAnswerBox) {
-      // Remove the tag from the answer box
       const droppedTagIndex = this.droppedTags.indexOf(tag.value);
       this.droppedTags.splice(droppedTagIndex, 1);
-      // Enable draggable attribute for the removed tag
       const originalTag = this.tagData.find(item => item.value === tag.value);
       if (originalTag) {
         originalTag.draggable = true;
       }
     } else {
-      // Add the tag to the answer box
       this.droppedTags.push(tag.value);
-      // Disable draggable attribute for the added tag
       tag.draggable = false;
     }
-    // Check if there are any tags in the answer box
     this.isAnswered = this.droppedTags.length > 0;
     this.requestUpdate();
   }
