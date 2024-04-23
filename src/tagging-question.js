@@ -113,13 +113,14 @@ export class TaggingQuestion extends LitElement {
     this.imageData = '';
     this.question = '';
     this.tagData = [
-      { value: 'Relaxed', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
-      { value: 'Excited', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.', draggable: true },
+      { value: 'Relaxing', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
       { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.', draggable: true },
       { value: 'Refreshing', correct: true, feedback: 'Feeling refreshed by the cool breeze and ocean waves.', draggable: true },
       { value: 'Crowded', correct: false, feedback: 'Feeling overwhelmed by the large number of people at the beach.', draggable: true },
+      { value: 'Exciting', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.', draggable: true },
       { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.', draggable: true },
-      { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.', draggable: true }
+      { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.', draggable: true },
+      { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.', draggable: true }
     ];
     this.droppedTags = [];
     this.isAnswered = false;
