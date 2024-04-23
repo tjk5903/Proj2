@@ -198,17 +198,28 @@ export class TaggingQuestion extends LitElement {
   drop(e) {
     e.preventDefault();
     const draggedTag = e.dataTransfer.getData('text/plain');
-    const existingTag = this.droppedTags.find(tag => tag === draggedTag);
-    if (!existingTag) {
+    const existingTagIndex = this.droppedTags.indexOf(draggedTag);
+    
+    if (existingTagIndex !== -1) {
+      // Tag exists in the answer box, so remove it
+      this.droppedTags.splice(existingTagIndex, 1);
+      // Enable draggable attribute for the removed tag
+      const originalTag = this.tagData.find(item => item.value === draggedTag);
+      if (originalTag) {
+        originalTag.draggable = true;
+      }
+    } else {
+      // Tag doesn't exist in the answer box, so add it
       this.droppedTags = [...this.droppedTags, draggedTag];
-      this.isAnswered = true;
-      // Disable draggable attribute for the dropped tag
+      // Disable draggable attribute for the added tag
       this.tagData.forEach(tag => {
         if (tag.value === draggedTag) {
           tag.draggable = false;
         }
       });
     }
+    // Check if there are any tags in the answer box
+    this.isAnswered = this.droppedTags.length > 0;
   }
 
   checkAnswer() {
