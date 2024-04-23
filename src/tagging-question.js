@@ -23,7 +23,6 @@ export class TaggingQuestion extends LitElement {
       margin-right: 10px;
       margin-bottom: 10px;
       cursor: pointer;
-      border: none;
     }
 
     .correct-tag {
