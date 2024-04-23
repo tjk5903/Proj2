@@ -23,6 +23,7 @@ export class TaggingQuestion extends LitElement {
       margin-right: 10px;
       margin-bottom: 10px;
       cursor: pointer;
+      border: none;
     }
 
     .correct-tag {
@@ -44,10 +45,12 @@ export class TaggingQuestion extends LitElement {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      justify-content: center;
     }
     .faded-text {
       color: #999999;
       font-style: italic;
+      text-align: center;
     }
 
     .dropped-tag {
