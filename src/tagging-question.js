@@ -45,6 +45,10 @@ export class TaggingQuestion extends LitElement {
       flex-wrap: wrap;
       align-items: center;
     }
+    .faded-text {
+      color: #999999;
+      font-style: italic;
+    }
 
     .dropped-tag {
       background-color: #999999;
@@ -141,9 +145,10 @@ export class TaggingQuestion extends LitElement {
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
         >
-          ${this.droppedTags ? this.droppedTags.map(tag => 
+          ${this.droppedTags.length === 0 ? html`<div class="faded-text">Drag answers here</div>` : ''}
+          ${this.droppedTags.map(tag => 
             html`<div class="dropped-tag ${this.getTagClass(tag)}">${tag}</div>`
-          ) : ''}
+          )}
         </div>
         <div class="feedback">${this.feedbackMessage}</div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
