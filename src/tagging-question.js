@@ -46,6 +46,15 @@ export class TaggingQuestion extends LitElement {
       align-items: center;
       justify-content: center;
     }
+    .question-area {
+      min-height: 100px;
+      border: 2px dashed #ccc;
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
 
     .faded-text {
       color: #999999;
@@ -126,6 +135,7 @@ export class TaggingQuestion extends LitElement {
       { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.', draggable: true }
     ];
     this.droppedTags = [];
+    this.answerTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
     this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
@@ -137,7 +147,7 @@ export class TaggingQuestion extends LitElement {
       <div class="tagging-question-container">
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
-        <div class="answer-area"
+        <div class="question-area"
         
         >
           ${this.tagData.map(
@@ -149,6 +159,7 @@ export class TaggingQuestion extends LitElement {
                 @click="${(e) => this.toggleTag(e, tag)}"
               >
                 ${tag.value}
+                
 
               </div>
             `
@@ -164,6 +175,7 @@ export class TaggingQuestion extends LitElement {
             html`<div class="dropped-tag ${this.getTagClass(tag)}" @click="${(e) => this.toggleTag(e, tag)}" draggable="true" @dragstart="${(e) => this.dragStart(e, tag)}">${tag}</div>`
           )}
         </div>
+        
         <div class="feedback">${this.feedbackMessage}</div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
@@ -211,7 +223,7 @@ export class TaggingQuestion extends LitElement {
       this.droppedTags.splice(existingTagIndex, 1);
       const originalTag = this.tagData.find(item => item.value === draggedTag);
       if (originalTag) {
-        originalTag.draggable = true;
+        originalTag.draggable = false;
       }
     } else {
       this.droppedTags = [...this.droppedTags, draggedTag];
@@ -236,6 +248,7 @@ export class TaggingQuestion extends LitElement {
 
   reset() {
     this.droppedTags = [];
+    this.answerTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
     // Reset draggable attribute for all tags
