@@ -114,7 +114,6 @@ export class TaggingQuestion extends LitElement {
     this.question = '';
     this.tagData = [
       { value: 'Relaxing', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
-      { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.', draggable: true },
       { value: 'Refreshing', correct: true, feedback: 'Feeling refreshed by the cool breeze and ocean waves.', draggable: true },
       { value: 'Crowded', correct: false, feedback: 'Feeling overwhelmed by the large number of people at the beach.', draggable: true },
       { value: 'Exciting', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.', draggable: true },
@@ -134,7 +133,9 @@ export class TaggingQuestion extends LitElement {
       <div class="tagging-question-container">
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
-        <div class="tags-container">
+        <div class="answer-area"
+        
+        >
           ${this.tagData.map(
             (tag) => html`
               <div 
