@@ -81,6 +81,10 @@ export class TaggingQuestion extends LitElement {
       cursor: pointer;
     }
 
+    .test{
+      display: none;
+    }
+
     .check-answer-btn:disabled {
       background-color: #ccc;
       cursor: not-allowed;
@@ -139,12 +143,13 @@ export class TaggingQuestion extends LitElement {
           ${this.tagData.map(
             (tag) => html`
               <div 
-                class="tag ${this.droppedTags.includes(tag.value) ? 'faded' : ''} ${tag.draggable ? '' : 'disabled'}" 
+                class="tag ${this.droppedTags.includes(tag.value) ? '' : ''} ${tag.draggable ? '' : 'test'}" 
                 draggable="${tag.draggable}" 
                 @dragstart="${(e) => this.dragStart(e, tag)}"
                 @click="${(e) => this.toggleTag(e, tag)}"
               >
                 ${tag.value}
+
               </div>
             `
           )}
