@@ -37,14 +37,12 @@ export class TaggingQuestion extends LitElement {
       margin-top: 10px;
       display: flex;
       flex-direction: column; 
-      align-items: center;
     }
 
     .feedback-message {
       margin-bottom: 5px; 
       display: flex;
       flex-direction: column; 
-      align-items: center;
     }
 
     .tag.disabled {
