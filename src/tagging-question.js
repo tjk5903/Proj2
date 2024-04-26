@@ -41,8 +41,6 @@ export class TaggingQuestion extends LitElement {
 
     .feedback-message {
       margin-bottom: 5px; 
-      display: flex;
-      flex-direction: column; 
     }
 
     .tag.disabled {
@@ -194,8 +192,8 @@ export class TaggingQuestion extends LitElement {
         </div>
         
         <div class="feedback">
-            ${this.feedbackMessage.split('\n').map(message => html`<div>${message}</div>
-          `)}
+            ${this.feedbackMessage.split('\n').map(message => html`<div class="feedback-message">${message}</div>
+            `)}
           </div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
