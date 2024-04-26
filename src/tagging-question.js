@@ -32,6 +32,18 @@ export class TaggingQuestion extends LitElement {
     .incorrect-tag {
       border: 2px solid #ff6961; 
     }
+
+    .feedback {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column; 
+      align-items: center;
+    }
+
+    .feedback-message {
+      margin-bottom: 5px; 
+    }
+
     .tag.disabled {
       opacity: 0.5; 
       pointer-events: none; 
@@ -169,14 +181,21 @@ export class TaggingQuestion extends LitElement {
           class="answer-area" 
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
+          
         >
           ${this.droppedTags.length === 0 ? html`<div class="faded-text">Drag answers here</div>` : ''}
           ${this.droppedTags.map(tag => 
-            html`<div class="dropped-tag ${this.getTagClass(tag)}" @click="${(e) => this.toggleTag(e, tag)}" draggable="true" @dragstart="${(e) => this.dragStart(e, tag)}">${tag}</div>`
+            html`<div class="dropped-tag ${this.getTagClass(tag)}" @click="${(e) => this.toggleTag(e, tag)}" draggable="true" @dragstart="${(e) => this.dragStart(e, tag)}">${tag}
+           ${tag.value}  ${tag.feedbackMessage}
+           </div>`
           )}
+          
         </div>
         
-        <div class="feedback">${this.feedbackMessage}</div>
+        <div class="feedback">
+            ${this.feedbackMessage.split('\n').map(message => html`<div>${message}</div>
+          `)}
+          </div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
       </div>
@@ -186,21 +205,19 @@ export class TaggingQuestion extends LitElement {
   toggleTag(e, tag) {
     const isInAnswerBox = this.droppedTags.includes(tag.value);
     if (isInAnswerBox) {
-        const indexInDroppedTags = this.droppedTags.indexOf(tag.value);
-        this.droppedTags.splice(indexInDroppedTags, 1);
-        this.tagData.push(tag); // Add the tag back to the question area
+      const droppedTagIndex = this.droppedTags.indexOf(tag.value);
+      this.droppedTags.splice(droppedTagIndex, 1);
+      const originalTag = this.tagData.find(item => item.value === tag.value);
+      if (originalTag) {
+        originalTag.draggable = true;
+      }
     } else {
-        this.droppedTags.push(tag);
-        const indexInTagData = this.tagData.findIndex(item => item.value === tag.value);
-        if (indexInTagData !== -1) {
-            this.tagData.splice(indexInTagData, 1); // Remove the tag from the question area
-        }
+      this.droppedTags.push(tag.value);
+      tag.draggable = false;
     }
     this.isAnswered = this.droppedTags.length > 0;
     this.requestUpdate();
-}
-
-
+  }
   
   
   getTagClass(tag) {
@@ -219,23 +236,39 @@ export class TaggingQuestion extends LitElement {
   drop(e) {
     e.preventDefault();
     const draggedTag = e.dataTransfer.getData('text/plain');
-    const existingTagIndex = this.droppedTags.findIndex(tag => tag.value === draggedTag);
-
+    const existingTagIndex = this.droppedTags.indexOf(draggedTag);
+    
     if (existingTagIndex !== -1) {
-        const removedTag = this.droppedTags.splice(existingTagIndex, 1)[0];
-        this.tagData.push(removedTag); // Add the tag back to the question area
+      this.droppedTags.splice(existingTagIndex, 1);
+      const originalTag = this.tagData.find(item => item.value === draggedTag);
+      if (originalTag) {
+        originalTag.draggable = false;
+      }
+    } else {
+      this.droppedTags = [...this.droppedTags, draggedTag];
+      this.tagData.forEach(tag => {
+        if (tag.value === draggedTag) {
+          tag.draggable = false;
+        }
+      });
     }
+    // Check if there are any tags in the answer box
     this.isAnswered = this.droppedTags.length > 0;
-}
+  }
 
   checkAnswer() {
-    const incorrectTags = this.droppedTags.filter(tag => !this.tagData.find(item => item.value === tag)?.correct);
-    if (incorrectTags.length > 0) {
-      this.feedbackMessage = 'Incorrect!';
-    } else {
-      this.feedbackMessage = 'Correct!';
-    }
-  }
+    this.feedbackMessage = ''; // Clear previous feedback messages
+    this.droppedTags.forEach((tag) => {
+        const tagItem = this.tagData.find(item => item.value === tag);
+        if (tagItem) {
+            if (tagItem.correct) {
+                this.feedbackMessage += `Correct! - ${tagItem.feedback}`;
+            } else {
+                this.feedbackMessage += `Incorrect! - ${tagItem.feedback}`;
+            }
+        }
+    });
+}
 
   reset() {
     this.droppedTags = [];
