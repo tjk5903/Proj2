@@ -185,19 +185,21 @@ export class TaggingQuestion extends LitElement {
   
   toggleTag(e, tag) {
     const isInAnswerBox = this.droppedTags.includes(tag.value);
-    const indexInTagData = this.tagData.findIndex(item => item.value === tag.value);
-
     if (isInAnswerBox) {
-        this.droppedTags.splice(this.droppedTags.indexOf(tag.value), 1);
+        const indexInDroppedTags = this.droppedTags.indexOf(tag.value);
+        this.droppedTags.splice(indexInDroppedTags, 1);
+        this.tagData.push(tag); // Add the tag back to the question area
     } else {
-        this.droppedTags.push(tag.value);
+        this.droppedTags.push(tag);
+        const indexInTagData = this.tagData.findIndex(item => item.value === tag.value);
+        if (indexInTagData !== -1) {
+            this.tagData.splice(indexInTagData, 1); // Remove the tag from the question area
+        }
     }
-
-    this.tagData[indexInTagData].draggable = !isInAnswerBox;
-
     this.isAnswered = this.droppedTags.length > 0;
     this.requestUpdate();
 }
+
 
   
   
@@ -217,20 +219,12 @@ export class TaggingQuestion extends LitElement {
   drop(e) {
     e.preventDefault();
     const draggedTag = e.dataTransfer.getData('text/plain');
-    const existingTagIndex = this.droppedTags.indexOf(draggedTag);
+    const existingTagIndex = this.droppedTags.findIndex(tag => tag.value === draggedTag);
 
     if (existingTagIndex !== -1) {
-        this.droppedTags.splice(existingTagIndex, 1);
-    } else {
-        this.droppedTags.push(draggedTag);
+        const removedTag = this.droppedTags.splice(existingTagIndex, 1)[0];
+        this.tagData.push(removedTag); // Add the tag back to the question area
     }
-
-    this.tagData.forEach(tag => {
-        if (tag.value === draggedTag) {
-            tag.draggable = true;
-        }
-    });
-
     this.isAnswered = this.droppedTags.length > 0;
 }
 
