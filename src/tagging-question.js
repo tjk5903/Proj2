@@ -185,20 +185,20 @@ export class TaggingQuestion extends LitElement {
   
   toggleTag(e, tag) {
     const isInAnswerBox = this.droppedTags.includes(tag.value);
+    const indexInTagData = this.tagData.findIndex(item => item.value === tag.value);
+
     if (isInAnswerBox) {
-      const droppedTagIndex = this.droppedTags.indexOf(tag.value);
-      this.droppedTags.splice(droppedTagIndex, 1);
-      const originalTag = this.tagData.find(item => item.value === tag.value);
-      if (originalTag) {
-        originalTag.draggable = true;
-      }
+        this.droppedTags.splice(this.droppedTags.indexOf(tag.value), 1);
     } else {
-      this.droppedTags.push(tag.value);
-      tag.draggable = false;
+        this.droppedTags.push(tag.value);
     }
+
+    this.tagData[indexInTagData].draggable = !isInAnswerBox;
+
     this.isAnswered = this.droppedTags.length > 0;
     this.requestUpdate();
-  }
+}
+
   
   
   getTagClass(tag) {
@@ -218,24 +218,21 @@ export class TaggingQuestion extends LitElement {
     e.preventDefault();
     const draggedTag = e.dataTransfer.getData('text/plain');
     const existingTagIndex = this.droppedTags.indexOf(draggedTag);
-    
+
     if (existingTagIndex !== -1) {
-      this.droppedTags.splice(existingTagIndex, 1);
-      const originalTag = this.tagData.find(item => item.value === draggedTag);
-      if (originalTag) {
-        originalTag.draggable = false;
-      }
+        this.droppedTags.splice(existingTagIndex, 1);
     } else {
-      this.droppedTags = [...this.droppedTags, draggedTag];
-      this.tagData.forEach(tag => {
-        if (tag.value === draggedTag) {
-          tag.draggable = false;
-        }
-      });
+        this.droppedTags.push(draggedTag);
     }
-    // Check if there are any tags in the answer box
+
+    this.tagData.forEach(tag => {
+        if (tag.value === draggedTag) {
+            tag.draggable = true;
+        }
+    });
+
     this.isAnswered = this.droppedTags.length > 0;
-  }
+}
 
   checkAnswer() {
     const incorrectTags = this.droppedTags.filter(tag => !this.tagData.find(item => item.value === tag)?.correct);
