@@ -161,7 +161,7 @@ export class TaggingQuestion extends LitElement {
 
   async loadTagsData() {
     try {
-      const response = await fetch('./src/tags.json'); // Update the path to your JSON file
+      const response = await fetch('./src/tags.json');
       if (!response.ok) {
         throw new Error('Failed to fetch tags data');
       }
@@ -213,7 +213,6 @@ export class TaggingQuestion extends LitElement {
           class="answer-area" 
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
-          
         >
           ${this.droppedTags.length === 0 ? html`<div class="faded-text">Drag answers here</div>` : ''}
           ${this.droppedTags.map(tag => 
@@ -221,13 +220,10 @@ export class TaggingQuestion extends LitElement {
            ${tag.value}  ${tag.feedbackMessage}
            </div>`
           )}
-          
         </div>
-        
         <div class="feedback">
-            ${this.feedbackMessage.split('\n').map(message => html`<div class="feedback-message">${message}</div>
-            `)}
-          </div>
+          ${this.feedbackMessage.split('\n').map(message => html`<div class="feedback-message">${message}</div>`)}
+        </div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
       </div>
