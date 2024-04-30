@@ -168,6 +168,7 @@ export class TaggingQuestion extends LitElement {
 
   render() {
     return html`
+    <confetti-container id="confetti">
       <div class="tagging-question-container">
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
@@ -211,6 +212,7 @@ export class TaggingQuestion extends LitElement {
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
       </div>
+      </confetti-container>
     `;
   }
   
