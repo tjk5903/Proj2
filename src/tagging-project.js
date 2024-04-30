@@ -144,14 +144,14 @@ export class TaggingQuestion extends LitElement {
     super();
     this.image = '';
     this.question = '';
-    this.answerSet = 'default';
+    this.answerSet = 'beach';
     this.tagOptions = [];
     this.allTags = [];
     this.tagCorrect = [];
     this.tagFeedback = [];
     this.selectedTags = [];
     this.submitted = false;
-    this.imageData = '';
+    this.imageData = "https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg" 
     this.feedbackMessage = '';
     this.tagData = [];
     this.droppedTags = [];
