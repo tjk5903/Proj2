@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 
+
 export class TaggingQuestion extends LitElement {
   static styles = css`
     .tagging-question-container {
@@ -122,35 +123,21 @@ export class TaggingQuestion extends LitElement {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     }
   `;
+  
 
-  static properties = {
-    tagData: { type: Array },
-    droppedTags: { type: Array },
-    isAnswered: { type: Boolean },
-    imageData: { type: String },
-    question: { type: String },
-    feedbackMessage: { type: String }
-  };
 
   constructor() {
     super();
-    this.imageData = '';
+    this.image = '';
     this.question = '';
-    this.tagData = [
-      { value: 'Relaxing', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
-      { value: 'Refreshing', correct: true, feedback: 'Feeling refreshed by the cool breeze and ocean waves.', draggable: true },
-      { value: 'Crowded', correct: false, feedback: 'Feeling overwhelmed by the large number of people at the beach.', draggable: true },
-      { value: 'Exciting', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.', draggable: true },
-      { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.', draggable: true },
-      { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.', draggable: true },
-      { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.', draggable: true }
-    ];
-    this.droppedTags = [];
-    this.answerTags = [];
-    this.isAnswered = false;
-    this.feedbackMessage = '';
-    this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
-    this.question = '';
+    this.answerSet = 'default';
+    this.tagOptions = [];
+    this.allTags = [];
+    this.tagCorrect = [];
+    this.tagFeedback = [];
+    this.selectedTags = [];
+    this.submitted = false;
+    this.loadTagsData();
   }
 
   render() {
@@ -280,6 +267,20 @@ export class TaggingQuestion extends LitElement {
     this.tagData.forEach(tag => {
       tag.draggable = true;
     });
+  }
+  static get properties() {
+    return {
+      ...super.properties,
+      image: { type: String },
+      question: { type: String },
+      answerSet: { type: String },
+      tagOptions: { type: Array },
+      allTags: { type: Array },
+      tagCorrect: { type: Array },
+      tagFeedback: { type: Array },
+      selectedTags: { type: Array },
+      submitted: { type: Boolean }
+    };
   }
 }
 
