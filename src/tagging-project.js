@@ -143,7 +143,7 @@ export class TaggingQuestion extends LitElement {
     this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
     this.question = '';
   }
-  
+
   async loadTagsData() {
     try {
       const response = await fetch('./assets/tags.json');
@@ -282,6 +282,18 @@ export class TaggingQuestion extends LitElement {
     });
 }
 
+makeItRain() {
+  const allCorrect = this.selectedTags.every(tag => this.isTagCorrect(tag));
+
+  if (allCorrect) {
+    import('@lrnwebcomponents/multiple-choice/lib/confetti-container.js').then((module) => {
+      setTimeout(() => {
+        this.shadowRoot.querySelector("#confetti").setAttribute("popped", "");
+      }, 0);
+    });
+  }
+}
+
   reset() {
     this.droppedTags = [];
     this.answerTags = [];
@@ -293,5 +305,6 @@ export class TaggingQuestion extends LitElement {
     });
   }
 }
+
 
 customElements.define('tagging-question', TaggingQuestion);
