@@ -143,6 +143,15 @@ export class TaggingQuestion extends LitElement {
     this.feedbackMessage = '';
     this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
     this.question = '';
+    this.tagData = [
+      { value: 'Relaxing', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
+      { value: 'Refreshing', correct: true, feedback: 'Feeling refreshed by the cool breeze and ocean waves.', draggable: true },
+      { value: 'Crowded', correct: false, feedback: 'Feeling overwhelmed by the large number of people at the beach.', draggable: true },
+      { value: 'Exciting', correct: true, feedback: 'Feeling excited about the fun activities and adventures at the beach.', draggable: true },
+      { value: 'Boring', correct: false, feedback: 'Feeling unenthusiastic due to the lack of activities and excitement at the beach.', draggable: true },
+      { value: 'Cloudy', correct: false, feedback: 'Being frustrated by the overcast weather and lack of sunshine at the beach.', draggable: true },
+      { value: 'Sunny', correct: true, feedback: 'Enjoying the warmth and brightness of the sun at the beach.', draggable: true }
+    ];
   }
 
   loadTagsData() {
@@ -154,41 +163,29 @@ export class TaggingQuestion extends LitElement {
         return response.json();
       })
       .then(tagsData => {
-        const tagSet = tagsData[this.answerSet];
+        const tagSet = tagsData['beach']; // Assuming 'beach' is the tag set name
         if (tagSet) {
-          const originalTagOptions = tagSet.tagOptions || [];
-          this.allTags = originalTagOptions.slice(); 
-          this.tagOptions = originalTagOptions.slice();
-          this.correctTags = [];
-          this.feedbackMessage = [];
-  
-          tagSet.tagAnswers.forEach((tagAnswer, index) => {
-            const tagKey = Object.keys(tagAnswer)[0];
-            const { correct, feedback } = tagAnswer[tagKey];
-            this.correctTags.push(correct);
-            this.feedbackMessage.push(feedback);
-          });
-  
-          this.tagOptions = this.shuffleArray(this.tagOptions);
+          this.tagData = tagSet.tagOptions.map(tag => ({
+            value: tag,
+            correct: false, // You may set this based on tag answers
+            feedback: '', // You may set this based on tag answers
+            draggable: true // Set to true initially
+          }));
         } else {
-          throw new Error(`tagSet '${this.answerSet}' not found`);
+          throw new Error(`Tag set 'beach' not found in tags.json`);
         }
       })
       .catch(error => {
         console.error("Error loading tags data: ", error);
-      }
-    );
+      });
   }
 
   render() {
     return html`
-    <confetti-container id="confetti">
       <div class="tagging-question-container">
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
-        <div class="question-area"
-        
-        >
+        <div class="question-area">
           ${this.tagData.map(
             (tag) => html`
               <div 
@@ -198,8 +195,6 @@ export class TaggingQuestion extends LitElement {
                 @click="${(e) => this.toggleTag(e, tag)}"
               >
                 ${tag.value}
-                
-
               </div>
             `
           )}
@@ -208,7 +203,6 @@ export class TaggingQuestion extends LitElement {
           class="answer-area" 
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
-          
         >
           ${this.droppedTags.length === 0 ? html`<div class="faded-text">Drag answers here</div>` : ''}
           ${this.droppedTags.map(tag => 
@@ -216,17 +210,13 @@ export class TaggingQuestion extends LitElement {
            ${tag.value}  ${tag.feedbackMessage}
            </div>`
           )}
-          
         </div>
-        
         <div class="feedback">
-            ${this.feedbackMessage.split('\n').map(message => html`<div class="feedback-message">${message}</div>
-            `)}
-          </div>
+          ${this.feedbackMessage.split('\n').map(message => html`<div class="feedback-message">${message}</div>`)}
+        </div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
       </div>
-      </confetti-container>
     `;
   }
   
