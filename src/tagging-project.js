@@ -195,9 +195,7 @@ export class TaggingQuestion extends LitElement {
       <div class="tagging-question-container">
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
-        <div class="question-area"
-        
-        >
+        <div class="question-area">
           ${this.tagData.map(
             (tag) => html`
               <div 
@@ -207,8 +205,6 @@ export class TaggingQuestion extends LitElement {
                 @click="${(e) => this.toggleTag(e, tag)}"
               >
                 ${tag.value}
-                
-
               </div>
             `
           )}
