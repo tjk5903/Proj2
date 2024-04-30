@@ -143,7 +143,7 @@ export class TaggingQuestion extends LitElement {
     this.isAnswered = false;
     this.feedbackMessage = '';
     this.showFeedback = false;
-    this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
+    this.imageData = "image";
     this.question = '';
     this.tagData = [
       { value: 'Relaxing', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
