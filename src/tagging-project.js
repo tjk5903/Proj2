@@ -138,34 +138,46 @@ export class TaggingQuestion extends LitElement {
     this.tagData = [];
     this.droppedTags = [];
     this.answerTags = [];
+    this.correctTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
     this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
     this.question = '';
   }
 
-  async loadTagsData() {
-    try {
-      const response = await fetch('./assets/tags.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch tags data');
+  loadTagsData() {
+    fetch("./assets/tags.json")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch tags data");
+        }
+        return response.json();
+      })
+      .then(tagsData => {
+        const tagSet = tagsData[this.answerSet];
+        if (tagSet) {
+          const originalTagOptions = tagSet.tagOptions || [];
+          this.allTags = originalTagOptions.slice(); 
+          this.tagOptions = originalTagOptions.slice();
+          this.correctTags = [];
+          this.feedbackMessage = [];
+  
+          tagSet.tagAnswers.forEach((tagAnswer, index) => {
+            const tagKey = Object.keys(tagAnswer)[0];
+            const { correct, feedback } = tagAnswer[tagKey];
+            this.correctTags.push(correct);
+            this.feedbackMessage.push(feedback);
+          });
+  
+          this.tagOptions = this.shuffleArray(this.tagOptions);
+        } else {
+          throw new Error(`tagSet '${this.answerSet}' not found`);
+        }
+      })
+      .catch(error => {
+        console.error("Error loading tags data: ", error);
       }
-      const tagsData = await response.json();
-      // Assuming you have a specific tag set named 'beach' in your JSON
-      const beachTags = tagsData['beach'];
-      if (!beachTags) {
-        throw new Error('Tag set for beach not found in tags.json');
-      }
-      // Populate tagData with the beach tags from the 'beach' tag set
-      this.tagData = beachTags.tagOptions.map(tag => ({
-        value: tag,
-        correct: beachTags.tagAnswers.some(answer => answer[tag]?.correct) || false,
-        feedback: beachTags.tagAnswers.find(answer => answer[tag])?.[tag]?.feedback || '',
-        draggable: true
-      }));
-    } catch (error) {
-      console.error('Error loading tags data: ', error);
-    }
+    );
   }
 
   render() {
