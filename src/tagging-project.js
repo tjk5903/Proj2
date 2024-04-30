@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit';
 
-
 export class TaggingQuestion extends LitElement {
   static styles = css`
     .tagging-question-container {
@@ -123,34 +122,28 @@ export class TaggingQuestion extends LitElement {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     }
   `;
+
   static properties = {
-    image: { type: String },
-    question: { type: String },
-    answerSet: { type: String },
-    tagOptions: { type: Array },
-    allTags: { type: Array },
-    tagCorrect: { type: Array },
-    tagFeedback: { type: Array },
-    selectedTags: { type: Array },
-    submitted: { type: Boolean },
-    imageData: { type: String },
-    feedbackMessage: { type: String },
     tagData: { type: Array },
     droppedTags: { type: Array },
     isAnswered: { type: Boolean },
+    imageData: { type: String },
+    question: { type: String },
+    feedbackMessage: { type: String }
   };
 
   constructor() {
     super();
-    this.answerSet = 'beach'; // Default answer set
-    this.imageData = "https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg"; // Default image URL
-    this.feedbackMessage = '';
+    this.question = '';
     this.tagData = [];
     this.droppedTags = [];
+    this.answerTags = [];
     this.isAnswered = false;
-    this.loadTagsData();
+    this.feedbackMessage = '';
+    this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
+    this.question = '';
   }
-
+  
   async loadTagsData() {
     try {
       const response = await fetch('./assets/tags.json');
@@ -165,30 +158,22 @@ export class TaggingQuestion extends LitElement {
       this.tagData = tagSet.tagOptions.map(tag => ({
         value: tag,
         correct: false,
-        feedback: ''
+        feedback: '',
+        draggable: true // Set draggable to true initially
       }));
-      tagSet.tagAnswers.forEach((tagAnswer) => {
-        const tagKey = Object.keys(tagAnswer)[0];
-        const { correct, feedback } = tagAnswer[tagKey];
-        const tagIndex = this.tagData.findIndex(tag => tag.value === tagKey);
-        if (tagIndex !== -1) {
-          this.tagData[tagIndex].correct = correct;
-          this.tagData[tagIndex].feedback = feedback;
-        }
-      });
-      this.allTags = this.tagData.map(tag => tag.value);
     } catch (error) {
       console.error('Error loading tags data: ', error);
     }
   }
 
   render() {
-    console.log("Tag data:", this.tagData); // Debugging statement
     return html`
       <div class="tagging-question-container">
         ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
-        <div class="question-area">
+        <div class="question-area"
+        
+        >
           ${this.tagData.map(
             (tag) => html`
               <div 
@@ -198,6 +183,8 @@ export class TaggingQuestion extends LitElement {
                 @click="${(e) => this.toggleTag(e, tag)}"
               >
                 ${tag.value}
+                
+
               </div>
             `
           )}
@@ -206,6 +193,7 @@ export class TaggingQuestion extends LitElement {
           class="answer-area" 
           @dragover="${this.allowDrop}" 
           @drop="${this.drop}"
+          
         >
           ${this.droppedTags.length === 0 ? html`<div class="faded-text">Drag answers here</div>` : ''}
           ${this.droppedTags.map(tag => 
@@ -213,10 +201,13 @@ export class TaggingQuestion extends LitElement {
            ${tag.value}  ${tag.feedbackMessage}
            </div>`
           )}
+          
         </div>
+        
         <div class="feedback">
-          ${this.feedbackMessage.split('\n').map(message => html`<div class="feedback-message">${message}</div>`)}
-        </div>
+            ${this.feedbackMessage.split('\n').map(message => html`<div class="feedback-message">${message}</div>
+            `)}
+          </div>
         <button class="check-answer-btn" ?disabled="${!this.isAnswered}" @click="${this.checkAnswer}">Check Answer</button>
         <button class="reset-btn" @click="${this.reset}">Reset</button>
       </div>
@@ -224,22 +215,31 @@ export class TaggingQuestion extends LitElement {
   }
   
   toggleTag(e, tag) {
-  if (!this.isAnswered) {
     const isInAnswerBox = this.droppedTags.includes(tag.value);
     if (isInAnswerBox) {
       const droppedTagIndex = this.droppedTags.indexOf(tag.value);
       this.droppedTags.splice(droppedTagIndex, 1);
+      const originalTag = this.tagData.find(item => item.value === tag.value);
+      if (originalTag) {
+        originalTag.draggable = true;
+      }
     } else {
       this.droppedTags.push(tag.value);
+      tag.draggable = false;
     }
+    this.isAnswered = this.droppedTags.length > 0;
     this.requestUpdate();
   }
-}
   
+  
+  getTagClass(tag) {
+    const correct = this.tagData.find(item => item.value === tag)?.correct;
+    return correct ? 'correct-tag' : 'incorrect-tag';
+  }
 
   dragStart(e, tag) {
-  e.dataTransfer.setData('text/plain', tag.value);
-}
+    e.dataTransfer.setData('text/plain', tag.value);
+  }
 
   allowDrop(e) {
     e.preventDefault();
@@ -247,33 +247,50 @@ export class TaggingQuestion extends LitElement {
 
   drop(e) {
     e.preventDefault();
-    if (!this.isAnswered) {
-      const draggedTag = e.dataTransfer.getData('text/plain');
-      const existingTagIndex = this.droppedTags.indexOf(draggedTag);
-      if (existingTagIndex !== -1) {
-        this.droppedTags.splice(existingTagIndex, 1);
+    const draggedTag = e.dataTransfer.getData('text/plain');
+    const existingTagIndex = this.droppedTags.indexOf(draggedTag);
+    
+    if (existingTagIndex !== -1) {
+      this.droppedTags.splice(existingTagIndex, 1);
+      const originalTag = this.tagData.find(item => item.value === draggedTag);
+      if (originalTag) {
+        originalTag.draggable = false;
       }
-      this.droppedTags.push(draggedTag);
-      this.isAnswered = true;
+    } else {
+      this.droppedTags = [...this.droppedTags, draggedTag];
+      this.tagData.forEach(tag => {
+        if (tag.value === draggedTag) {
+          tag.draggable = false;
+        }
+      });
     }
+    // Check if there are any tags in the answer box
+    this.isAnswered = this.droppedTags.length > 0;
   }
 
   checkAnswer() {
-    this.feedbackMessage = '';
+    this.feedbackMessage = ''; // Clear previous feedback messages
     this.droppedTags.forEach((tag) => {
-      const index = this.allTags.indexOf(tag);
-      if (index !== -1) {
-        const correct = this.tagCorrect[index];
-        const feedback = this.tagFeedback[index];
-        this.feedbackMessage += `${tag} - ${correct ? 'Correct!' : 'Incorrect!'} - ${feedback}\n`;
-      }
+        const tagItem = this.tagData.find(item => item.value === tag);
+        if (tagItem) {
+            if (tagItem.correct) {
+                this.feedbackMessage += `Correct! - ${tagItem.feedback}`;
+            } else {
+                this.feedbackMessage += `Incorrect! - ${tagItem.feedback}`;
+            }
+        }
     });
-  }
+}
 
   reset() {
     this.droppedTags = [];
+    this.answerTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
+    // Reset draggable attribute for all tags
+    this.tagData.forEach(tag => {
+      tag.draggable = true;
+    });
   }
 }
 
