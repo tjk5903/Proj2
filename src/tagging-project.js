@@ -143,7 +143,7 @@ export class TaggingQuestion extends LitElement {
     this.isAnswered = false;
     this.feedbackMessage = '';
     this.showFeedback = false;
-    this.imageData = "image";
+    this.imageData = "";
     this.question = '';
     this.tagData = [
       { value: 'Relaxing', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
@@ -312,6 +312,7 @@ makeItRain() {
     this.answerTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
+    this.showFeedback = false;
     // Reset draggable attribute for all tags
     this.tagData.forEach(tag => {
       tag.draggable = true;
