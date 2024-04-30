@@ -161,7 +161,7 @@ export class TaggingQuestion extends LitElement {
 
   async loadTagsData() {
     try {
-      const response = await fetch('./src/tags.json');
+      const response = await fetch('./src/tags.json'); // Update the path to your JSON file
       if (!response.ok) {
         throw new Error('Failed to fetch tags data');
       }
