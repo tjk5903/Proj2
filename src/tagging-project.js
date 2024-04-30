@@ -151,15 +151,17 @@ export class TaggingQuestion extends LitElement {
         throw new Error('Failed to fetch tags data');
       }
       const tagsData = await response.json();
-      const tagSet = tagsData[this.answerSet];
-      if (!tagSet) {
-        throw new Error(`Tag set '${this.answerSet}' not found`);
+      // Assuming you have a specific tag set named 'beach' in your JSON
+      const beachTags = tagsData['beach'];
+      if (!beachTags) {
+        throw new Error('Tag set for beach not found in tags.json');
       }
-      this.tagData = tagSet.tagOptions.map(tag => ({
+      // Populate tagData with the beach tags from the 'beach' tag set
+      this.tagData = beachTags.tagOptions.map(tag => ({
         value: tag,
-        correct: false,
-        feedback: '',
-        draggable: true // Set draggable to true initially
+        correct: beachTags.tagAnswers.some(answer => answer[tag]?.correct) || false,
+        feedback: beachTags.tagAnswers.find(answer => answer[tag])?.[tag]?.feedback || '',
+        draggable: true
       }));
     } catch (error) {
       console.error('Error loading tags data: ', error);
