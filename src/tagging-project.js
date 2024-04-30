@@ -131,7 +131,9 @@ export class TaggingQuestion extends LitElement {
     imageData: { type: String },
     question: { type: String },
     feedbackMessage: { type: String },
-    showFeedback: { type: Boolean }
+    showFeedback: { type: Boolean },
+    imageData1: { type: String },
+    imageData2: { type: String }
   };
 
   constructor() {
@@ -144,7 +146,8 @@ export class TaggingQuestion extends LitElement {
     this.isAnswered = false;
     this.feedbackMessage = '';
     this.showFeedback = false;
-    this.imageData = "";
+    this.imageData1 = "";
+    this.imageData2 = "";
     this.question = '';
     this.tagData = [
       { value: 'Relaxing', correct: true, feedback: 'Feeling relaxed while enjoying the calm atmosphere of the beach.', draggable: true },
@@ -186,7 +189,8 @@ export class TaggingQuestion extends LitElement {
   render() {
     return html`
       <div class="tagging-question-container">
-        ${this.imageData ? html`<img src="${this.imageData}" alt="Question Image" class="question-image">` : ''}
+        ${this.imageData1 ? html`<img src="${this.imageData1}" alt="Question Image 1" class="question-image">` : ''}
+        ${this.imageData2 ? html`<img src="${this.imageData2}" alt="Question Image 2" class="question-image">` : ''}
         ${this.question ? html`<div class="question">${this.question}</div>` : ''}
         <div class="question-area">
           ${this.tagData.map(
