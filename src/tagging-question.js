@@ -158,7 +158,7 @@ export class TaggingQuestion extends LitElement {
     this.isAnswered = false;
     this.loadTagsData();
   }
-  
+
   async loadTagsData() {
     try {
       const response = await fetch('./src/tags.json');
@@ -238,22 +238,23 @@ export class TaggingQuestion extends LitElement {
     `;
   }
   
-  toggleTag(tag) {
-    if (!this.isAnswered) {
-      const index = this.droppedTags.indexOf(tag);
-      if (index !== -1) {
-        this.droppedTags.splice(index, 1);
-      } else {
-        this.droppedTags.push(tag);
-      }
-      this.requestUpdate();
+  toggleTag(e, tag) {
+  if (!this.isAnswered) {
+    const isInAnswerBox = this.droppedTags.includes(tag.value);
+    if (isInAnswerBox) {
+      const droppedTagIndex = this.droppedTags.indexOf(tag.value);
+      this.droppedTags.splice(droppedTagIndex, 1);
+    } else {
+      this.droppedTags.push(tag.value);
     }
+    this.requestUpdate();
   }
+}
   
 
   dragStart(e, tag) {
-    e.dataTransfer.setData('text/plain', tag);
-  }
+  e.dataTransfer.setData('text/plain', tag.value);
+}
 
   allowDrop(e) {
     e.preventDefault();
