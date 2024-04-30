@@ -129,7 +129,8 @@ export class TaggingQuestion extends LitElement {
     isAnswered: { type: Boolean },
     imageData: { type: String },
     question: { type: String },
-    feedbackMessage: { type: String }
+    feedbackMessage: { type: String },
+    showFeedback: { type: Boolean }
   };
 
   constructor() {
@@ -141,6 +142,7 @@ export class TaggingQuestion extends LitElement {
     this.correctTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
+    this.showFeedback = false;
     this.imageData = 'https://t3.ftcdn.net/jpg/02/43/25/90/360_F_243259090_crbVsAqKF3PC2jk2eKiUwZHBPH8Q6y9Y.jpg'; 
     this.question = '';
     this.tagData = [
@@ -154,7 +156,7 @@ export class TaggingQuestion extends LitElement {
     ];
   }
 
-  loadTagsData() {
+  loadTagsData(tagSetName) {
     fetch("./assets/tags.json")
       .then(response => {
         if (!response.ok) {
@@ -163,7 +165,7 @@ export class TaggingQuestion extends LitElement {
         return response.json();
       })
       .then(tagsData => {
-        const tagSet = tagsData['beach']; // Assuming 'beach' is the tag set name
+        const tagSet = tagsData[tagSetName];
         if (tagSet) {
           this.tagData = tagSet.tagOptions.map(tag => ({
             value: tag,
@@ -172,7 +174,7 @@ export class TaggingQuestion extends LitElement {
             draggable: true // Set to true initially
           }));
         } else {
-          throw new Error(`Tag set 'beach' not found in tags.json`);
+          throw new Error(`Tag set '${tagSetName}' not found in tags.json`);
         }
       })
       .catch(error => {
@@ -239,8 +241,12 @@ export class TaggingQuestion extends LitElement {
   
   
   getTagClass(tag) {
-    const correct = this.tagData.find(item => item.value === tag)?.correct;
-    return correct ? 'correct-tag' : 'incorrect-tag';
+    if (this.showFeedback) {
+      const correct = this.tagData.find(item => item.value === tag)?.correct;
+      return correct ? 'correct-tag' : 'incorrect-tag';
+    } else {
+      return '';
+    }
   }
 
   dragStart(e, tag) {
@@ -276,6 +282,7 @@ export class TaggingQuestion extends LitElement {
 
   checkAnswer() {
     this.feedbackMessage = ''; // Clear previous feedback messages
+    this.showFeedback = true;
     this.droppedTags.forEach((tag) => {
         const tagItem = this.tagData.find(item => item.value === tag);
         if (tagItem) {
