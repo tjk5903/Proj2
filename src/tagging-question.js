@@ -123,8 +123,22 @@ export class TaggingQuestion extends LitElement {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     }
   `;
-  
-
+  static properties = {
+    image: { type: String },
+    question: { type: String },
+    answerSet: { type: String },
+    tagOptions: { type: Array },
+    allTags: { type: Array },
+    tagCorrect: { type: Array },
+    tagFeedback: { type: Array },
+    selectedTags: { type: Array },
+    submitted: { type: Boolean },
+    imageData: { type: String },
+    feedbackMessage: { type: String },
+    tagData: { type: Array },
+    droppedTags: { type: Array },
+    isAnswered: { type: Boolean },
+  };
 
   constructor() {
     super();
@@ -137,7 +151,43 @@ export class TaggingQuestion extends LitElement {
     this.tagFeedback = [];
     this.selectedTags = [];
     this.submitted = false;
+    this.imageData = '';
+    this.feedbackMessage = '';
+    this.tagData = [];
+    this.droppedTags = [];
+    this.isAnswered = false;
     this.loadTagsData();
+  }
+  
+  async loadTagsData() {
+    try {
+      const response = await fetch('./src/tags.json');
+      if (!response.ok) {
+        throw new Error('Failed to fetch tags data');
+      }
+      const tagsData = await response.json();
+      const tagSet = tagsData[this.answerSet];
+      if (!tagSet) {
+        throw new Error(`Tag set '${this.answerSet}' not found`);
+      }
+      this.tagData = tagSet.tagOptions.map(tag => ({
+        value: tag,
+        correct: false,
+        feedback: ''
+      }));
+      tagSet.tagAnswers.forEach((tagAnswer) => {
+        const tagKey = Object.keys(tagAnswer)[0];
+        const { correct, feedback } = tagAnswer[tagKey];
+        const tagIndex = this.tagData.findIndex(tag => tag.value === tagKey);
+        if (tagIndex !== -1) {
+          this.tagData[tagIndex].correct = correct;
+          this.tagData[tagIndex].feedback = feedback;
+        }
+      });
+      this.allTags = this.tagData.map(tag => tag.value);
+    } catch (error) {
+      console.error('Error loading tags data: ', error);
+    }
   }
 
   render() {
@@ -188,32 +238,21 @@ export class TaggingQuestion extends LitElement {
     `;
   }
   
-  toggleTag(e, tag) {
+  toggleTag(tag) {
     if (!this.isAnswered) {
-      const isInAnswerBox = this.droppedTags.includes(tag.value);
-      if (isInAnswerBox) {
-        const droppedTagIndex = this.droppedTags.indexOf(tag.value);
-        this.droppedTags.splice(droppedTagIndex, 1);
-        const originalTag = this.tagData.find(item => item.value === tag.value);
-        if (originalTag) {
-          originalTag.draggable = true;
-        }
+      const index = this.droppedTags.indexOf(tag);
+      if (index !== -1) {
+        this.droppedTags.splice(index, 1);
       } else {
-        this.droppedTags.push(tag.value);
-        tag.draggable = false;
+        this.droppedTags.push(tag);
       }
       this.requestUpdate();
     }
   }
   
-  
-  getTagClass(tag) {
-    const correct = this.tagData.find(item => item.value === tag)?.correct;
-    return correct ? 'correct-tag' : 'incorrect-tag';
-  }
 
   dragStart(e, tag) {
-    e.dataTransfer.setData('text/plain', tag.value);
+    e.dataTransfer.setData('text/plain', tag);
   }
 
   allowDrop(e) {
@@ -225,62 +264,30 @@ export class TaggingQuestion extends LitElement {
     if (!this.isAnswered) {
       const draggedTag = e.dataTransfer.getData('text/plain');
       const existingTagIndex = this.droppedTags.indexOf(draggedTag);
-      
       if (existingTagIndex !== -1) {
         this.droppedTags.splice(existingTagIndex, 1);
-        const originalTag = this.tagData.find(item => item.value === draggedTag);
-        if (originalTag) {
-          originalTag.draggable = true;
-        }
-      } else {
-        this.droppedTags = [...this.droppedTags, draggedTag];
-        this.tagData.forEach(tag => {
-          if (tag.value === draggedTag) {
-            tag.draggable = false;
-          }
-        });
       }
-      this.isAnswered = this.droppedTags.length > 0;
+      this.droppedTags.push(draggedTag);
+      this.isAnswered = true;
     }
   }
 
   checkAnswer() {
-    this.feedbackMessage = ''; // Clear previous feedback messages
+    this.feedbackMessage = '';
     this.droppedTags.forEach((tag) => {
-        const tagItem = this.tagData.find(item => item.value === tag);
-        if (tagItem) {
-            if (tagItem.correct) {
-                this.feedbackMessage += `Correct! - ${tagItem.feedback}`;
-            } else {
-                this.feedbackMessage += `Incorrect! - ${tagItem.feedback}`;
-            }
-        }
+      const index = this.allTags.indexOf(tag);
+      if (index !== -1) {
+        const correct = this.tagCorrect[index];
+        const feedback = this.tagFeedback[index];
+        this.feedbackMessage += `${tag} - ${correct ? 'Correct!' : 'Incorrect!'} - ${feedback}\n`;
+      }
     });
-}
+  }
 
   reset() {
     this.droppedTags = [];
-    this.answerTags = [];
     this.isAnswered = false;
     this.feedbackMessage = '';
-    // Reset draggable attribute for all tags
-    this.tagData.forEach(tag => {
-      tag.draggable = true;
-    });
-  }
-  static get properties() {
-    return {
-      ...super.properties,
-      image: { type: String },
-      question: { type: String },
-      answerSet: { type: String },
-      tagOptions: { type: Array },
-      allTags: { type: Array },
-      tagCorrect: { type: Array },
-      tagFeedback: { type: Array },
-      selectedTags: { type: Array },
-      submitted: { type: Boolean }
-    };
   }
 }
 
