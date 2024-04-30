@@ -1,0 +1,57 @@
+{
+    "beach": {
+      "tagOptions": [
+        "Relaxed",
+        "Excited",
+        "Sunny",
+        "Refreshing",
+        "Crowded",
+        "Boring",
+        "Cloudy"
+      ],
+      "tagAnswers": [
+        {
+          "Relaxed": {
+            "correct": true,
+            "feedback": "Feeling relaxed while enjoying the calm atmosphere of the beach."
+          }
+        },
+        {
+          "Excited": {
+            "correct": true,
+            "feedback": "Feeling excited about the fun activities and adventures at the beach."
+          }
+        },
+        {
+          "Sunny": {
+            "correct": true,
+            "feedback": "Enjoying the warmth and brightness of the sun at the beach."
+          }
+        },
+        {
+          "Refreshing": {
+            "correct": true,
+            "feedback": "Feeling refreshed by the cool breeze and ocean waves."
+          }
+        },
+        {
+          "Crowded": {
+            "correct": false,
+            "feedback": "Feeling overwhelmed by the large number of people at the beach."
+          }
+        },
+        {
+          "Boring": {
+            "correct": false,
+            "feedback": "Feeling unenthusiastic due to the lack of activities and excitement at the beach."
+          }
+        },
+        {
+          "Cloudy": {
+            "correct": false,
+            "feedback": "Being frustrated by the overcast weather and lack of sunshine at the beach."
+          }
+        }
+      ]
+    }
+  }
