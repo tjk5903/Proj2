@@ -158,9 +158,7 @@ export class TaggingQuestion extends LitElement {
         throw new Error('Failed to fetch tags data');
       }
       const tagsData = await response.json();
-      console.log("Tags data:", tagsData); // Debugging statement
       const tagSet = tagsData[this.answerSet];
-      console.log("Tag set:", tagSet); // Debugging statement
       if (!tagSet) {
         throw new Error(`Tag set '${this.answerSet}' not found`);
       }
@@ -169,7 +167,6 @@ export class TaggingQuestion extends LitElement {
         correct: false,
         feedback: ''
       }));
-      console.log("Tag data:", this.tagData); // Debugging statement
       tagSet.tagAnswers.forEach((tagAnswer) => {
         const tagKey = Object.keys(tagAnswer)[0];
         const { correct, feedback } = tagAnswer[tagKey];
@@ -179,7 +176,7 @@ export class TaggingQuestion extends LitElement {
           this.tagData[tagIndex].feedback = feedback;
         }
       });
-      console.log("All tags:", this.allTags); // Debugging statement
+      this.allTags = this.tagData.map(tag => tag.value);
     } catch (error) {
       console.error('Error loading tags data: ', error);
     }
