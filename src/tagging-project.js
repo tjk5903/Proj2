@@ -261,6 +261,25 @@ export class TaggingQuestion extends LitElement {
   allowDrop(e) {
     e.preventDefault();
   }
+  
+  handleKeyDown(e, tag) {
+    if (e.key === 'Enter') {
+      if (this.droppedTags.includes(tag.value)) {
+        this.toggleTag(e, tag);
+      } else {
+        this.dropTag(tag);
+      }
+    }
+  }
+  
+  dropTag(tag) {
+    if (!this.droppedTags.includes(tag.value)) {
+      this.droppedTags.push(tag.value);
+      tag.draggable = false;
+      this.isAnswered = true;
+      this.requestUpdate();
+    }
+  }
 
   drop(e) {
     e.preventDefault();
