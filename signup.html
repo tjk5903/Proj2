@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <style>
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+    <script>
+        function fieldCheck(field) {
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'error-message';
+
+            if (field.nextSibling && field.nextSibling.className === 'error-message') {
+                field.parentNode.removeChild(field.nextSibling);
+            }
+
+            switch (field.value) {
+                case "Customer First Name":
+                case "Customer Last Name":
+                case "Address":
+                case "City":
+                    if (field.value === "") {
+                        errorMsg.textContent = "This field is required.";
+                        field.style.borderColor = "red";
+                    } else {
+                        field.style.borderColor = "";
+                    }
+                    break;
+                case "State":
+                    if (field.value !== "PA" && field.value !== "NJ") {
+                        errorMsg.textContent = "State must be PA or NJ.";
+                        field.style.borderColor = "red";
+                    } else {
+                        field.style.borderColor = "";
+                    }
+                    break;
+                case "Zip":
+                    const zipRegex = /^\d{9}$/;
+                    if (!zipRegex.test(field.value)) {
+                        errorMsg.textContent = "Zip must be a 9-digit number.";
+                        field.style.borderColor = "red";
+                    } else {
+                        field.style.borderColor = "";
+                    }
+                    break;
+                default:
+                    if (field.value === "") {
+                        errorMsg.textContent = "This field is required.";
+                        field.style.borderColor = "red";
+                    } else {
+                        field.style.borderColor = "";
+                    }
+                    break;
+            }
+
+            if (errorMsg.textContent !== "") {
+                field.parentNode.insertBefore(errorMsg, field.nextSibling);
+                errorMsg.style.display = "block";
+            }
+        }
+    </script>
+</head>
+<body>
+    <form name="signup">
+        <input type="text" placeholder="Customer First Name" onfocusout="fieldCheck(this)"></input><br>
+        <input type="text" placeholder="Customer Last Name" onfocusout="fieldCheck(this)"></input><br>
+        <input type="text" placeholder="Address" onfocusout="fieldCheck(this)"></input><br>
+        <input type="text" placeholder="City" onfocusout="fieldCheck(this)"></input><br>
+        <input type="text" placeholder="State" onfocusout="fieldCheck(this)"></input><br>
+        <input type="text" placeholder="Zip" onfocusout="fieldCheck(this)"></input><br>
+        <input type="submit" value="Submit"></input><br>
+    </form>
+</body>
+</html>
