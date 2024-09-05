@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+      function checkform() {
+          var isValid = true;
+
+          if ($("input[name='productid']").val().trim() === "") {
+              alert("Please enter Product Id.");
+              isValid = false;
+          }
+
+          if ($("input[name='productname']").val().trim() === "") {
+              alert("Please enter Product Name.");
+              isValid = false;
+          }
+
+          if ($("input[name='productdescription']").val().trim() === "") {
+              alert("Please enter Product Full Description.");
+              isValid = false;
+          }
+
+          if ($("input[name='productmanufacturer']").val().trim() === "") {
+              alert("Please enter Product Manufacturer.");
+              isValid = false;
+          }
+
+          if ($("input[name='productcode']").val().trim() === "") {
+              alert("Please enter Product Code.");
+              isValid = false;
+          }
+
+          var price = $("input[name='productprice']").val().trim();
+          if (price === "" || isNaN(price)) {
+              alert("Please enter a valid numeric Product Price.");
+              isValid = false;
+          }
+
+          return isValid;
+      }
+
+      $(document).ready(function() {
+          $("form[name='product']").on("submit", function() {
+              return checkform();
+          });
+      });
+   </script>
+</head>
+<body>
+    <form name="product">
+        <input type="text" name="productid" placeholder="Product Id"></br>
+        <input type="text" name="productname" placeholder="Product Name"></br>
+        <input type="text" name="productdescription" placeholder="Product Full Description"></br>
+        <input type="text" name="productmanufacturer" placeholder="Product Manufacturer"></br>
+        <input type="text" name="productcode" placeholder="Product Code"></br>
+        <input type="text" name="productprice" placeholder="Product Price"></br>
+        <input type="submit" value="Submit"></br>
+    </form>
+</body>
+</html>

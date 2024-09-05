@@ -16,43 +16,22 @@
                 field.parentNode.removeChild(field.nextSibling);
             }
 
-            switch (field.value) {
-                case "Customer First Name":
-                case "Customer Last Name":
-                case "Address":
-                case "City":
-                    if (field.value === "") {
-                        errorMsg.textContent = "This field is required.";
-                        field.style.borderColor = "red";
-                    } else {
-                        field.style.borderColor = "";
-                    }
-                    break;
-                case "State":
-                    if (field.value !== "PA" && field.value !== "NJ") {
-                        errorMsg.textContent = "State must be PA or NJ.";
-                        field.style.borderColor = "red";
-                    } else {
-                        field.style.borderColor = "";
-                    }
-                    break;
-                case "Zip":
-                    const zipRegex = /^\d{9}$/;
-                    if (!zipRegex.test(field.value)) {
-                        errorMsg.textContent = "Zip must be a 9-digit number.";
-                        field.style.borderColor = "red";
-                    } else {
-                        field.style.borderColor = "";
-                    }
-                    break;
-                default:
-                    if (field.value === "") {
-                        errorMsg.textContent = "This field is required.";
-                        field.style.borderColor = "red";
-                    } else {
-                        field.style.borderColor = "";
-                    }
-                    break;
+            if (field.value.trim() === "") {
+                errorMsg.textContent = "This field is required.";
+                field.style.borderColor = "red";
+            } else if (field.placeholder === "State" && (field.value !== "PA" && field.value !== "NJ")) {
+                errorMsg.textContent = "State must be PA or NJ.";
+                field.style.borderColor = "red";
+            } else if (field.placeholder === "Zip") {
+                const zipRegex = /^\d{9}$/;
+                if (!zipRegex.test(field.value)) {
+                    errorMsg.textContent = "Zip must be a 9-digit number.";
+                    field.style.borderColor = "red";
+                } else {
+                    field.style.borderColor = "";6
+                }
+            } else {
+                field.style.borderColor = "";
             }
 
             if (errorMsg.textContent !== "") {
