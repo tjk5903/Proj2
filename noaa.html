@@ -1,0 +1,27 @@
+<html></html>
+<head>
+  <meta http-equiv="Access-Control-Allow-Origin" content="*">
+  <script
+  src="https://code.jquery.com/jquery-3.6.3.min.js"
+  integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+  crossorigin="anonymous"></script>
+<base href="http://www.example.com/">
+</head>
+<body>
+    <script>
+    class Metadata {
+        constructor(resultset) {
+            this.resultset = resultset;
+        }
+    }
+    static fromJSON(json) {
+        const resultset = new ResultSet (
+            json.resultset.offset,
+            json.resultset.count,
+            json.resultset.limit,
+        );
+        return new Metadata (resultset);
+    }
+    </script>
+</body>
+</html>
